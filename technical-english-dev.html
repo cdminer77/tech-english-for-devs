@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Technical English for Developers</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --border: #1e2d45;
+      --accent: #00d4ff;
+      --accent2: #ff6b35;
+      --accent3: #7c3aed;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --green: #10b981;
+      --yellow: #f59e0b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* HEADER */
+    header {
+      position: relative;
+      padding: 80px 40px 60px;
+      text-align: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(0,212,255,0.3);
+      padding: 6px 14px;
+      border-radius: 2px;
+      margin-bottom: 24px;
+      background: rgba(0,212,255,0.05);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 40px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: block;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,14,26,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+
+    nav a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 14px 16px;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    nav a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* MAIN */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* LESSON CARD */
+    .lesson {
+      margin-bottom: 60px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--surface);
+      transition: border-color .3s;
+      animation: fadeUp .6s ease both;
+    }
+
+    .lesson:hover { border-color: rgba(0,212,255,0.3); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .lesson:nth-child(1)  { animation-delay: .05s; }
+    .lesson:nth-child(2)  { animation-delay: .10s; }
+    .lesson:nth-child(3)  { animation-delay: .15s; }
+    .lesson:nth-child(4)  { animation-delay: .20s; }
+    .lesson:nth-child(5)  { animation-delay: .25s; }
+    .lesson:nth-child(6)  { animation-delay: .30s; }
+    .lesson:nth-child(7)  { animation-delay: .35s; }
+    .lesson:nth-child(8)  { animation-delay: .40s; }
+    .lesson:nth-child(9)  { animation-delay: .45s; }
+    .lesson:nth-child(10) { animation-delay: .50s; }
+
+    .lesson-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 24px 28px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lesson-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.2);
+      padding: 4px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .lesson-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      flex: 1;
+    }
+
+    .lesson-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 4px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .tag-vocab  { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+    .tag-phrase { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .tag-read   { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .tag-write  { background: rgba(255,107,53,0.12); color: #fb923c; border: 1px solid rgba(255,107,53,0.3); }
+
+    .lesson-body { padding: 28px; }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    p { font-size: 0.95rem; line-height: 1.7; color: #cbd5e1; margin-bottom: 16px; }
+
+    /* VOCABULARY TABLE */
+    .vocab-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-bottom: 24px;
+    }
+    .vocab-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .vocab-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(30,45,69,0.6);
+      vertical-align: top;
+    }
+    .vocab-table tr:last-child td { border-bottom: none; }
+    .vocab-table .term {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      font-size: 0.85rem;
+    }
+    .vocab-table .def { color: #94a3b8; }
+    .vocab-table .ex  { color: #64748b; font-style: italic; font-size: 0.82rem; }
+
+    /* CODE BLOCK */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .code-block .kw  { color: #7c3aed; }
+    .code-block .str { color: #10b981; }
+    .code-block .cmt { color: #475569; }
+    .code-block .fn  { color: #00d4ff; }
+    .code-block .num { color: #f59e0b; }
+
+    /* EXERCISE BOX */
+    .exercise {
+      background: rgba(0,212,255,0.04);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 3px 3px 0;
+      padding: 20px 24px;
+      margin-top: 24px;
+    }
+
+    .exercise-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .exercise-title::before {
+      content: '▶';
+      font-size: 9px;
+    }
+
+    .exercise p { margin-bottom: 8px; color: #94a3b8; }
+
+    ul, ol { padding-left: 20px; margin-bottom: 16px; }
+    li { font-size: 0.92rem; line-height: 1.8; color: #94a3b8; }
+    li strong { color: #e2e8f0; }
+
+    .answer-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 2px;
+      background: transparent;
+      transition: color .2s, border-color .2s;
+      user-select: none;
+    }
+    .answer-toggle:hover { color: var(--accent); border-color: rgba(0,212,255,0.4); }
+
+    .answer {
+      display: none;
+      margin-top: 14px;
+      padding: 14px 18px;
+      background: rgba(16,185,129,0.06);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 2px;
+      font-size: 0.88rem;
+      color: #6ee7b7;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.7;
+    }
+    .answer.show { display: block; }
+
+    /* DIVIDER */
+    hr { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* PHRASES */
+    .phrase-list { list-style: none; padding: 0; margin-bottom: 20px; }
+    .phrase-list li {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(30,45,69,0.5);
+      align-items: flex-start;
+    }
+    .phrase-list li:last-child { border-bottom: none; }
+    .phrase-list .ph {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent2);
+      font-size: 0.85rem;
+      min-width: 220px;
+    }
+    .phrase-list .ph-def { color: #64748b; font-size: 0.85rem; font-style: italic; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px;
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* SCROLL PROGRESS */
+    #progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--accent);
+      z-index: 9999;
+      transition: width .1s linear;
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header>
+  <div class="badge">10 lessons · software development</div>
+  <h1>Technical <span>English</span><br>for Developers</h1>
+  <p class="subtitle">// vocabulary · phrases · exercises · real-world usage</p>
+  <div class="stats">
+    <div class="stat"><span class="stat-num">10</span><span class="stat-label">Lessons</span></div>
+    <div class="stat"><span class="stat-num">10</span><span class="stat-label">Exercises</span></div>
+    <div class="stat"><span class="stat-num">100+</span><span class="stat-label">Terms</span></div>
+    <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Practice</span></div>
+  </div>
+</header>
+
+<nav>
+  <a href="#l1">01 · Version Control</a>
+  <a href="#l2">02 · Code Review</a>
+  <a href="#l3">03 · Bug Reports</a>
+  <a href="#l4">04 · APIs & Docs</a>
+  <a href="#l5">05 · Agile & Scrum</a>
+  <a href="#l6">06 · System Design</a>
+  <a href="#l7">07 · Testing</a>
+  <a href="#l8">08 · DevOps & CI/CD</a>
+  <a href="#l9">09 · Team Communication</a>
+  <a href="#l10">10 · Tech Interviews</a>
+</nav>
+
+<main>
+
+  <!-- LESSON 1 -->
+  <div class="lesson" id="l1">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 01</span>
+      <span class="lesson-title">Version Control &amp; Git Workflow</span>
+      <span class="lesson-tag tag-vocab">VOCABULARY</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">Key Terms</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">repository (repo)</td>
+          <td class="def">A storage location for your project's code and history</td>
+          <td class="ex">"Clone the repo before making changes."</td>
+        </tr>
+        <tr>
+          <td class="term">commit</td>
+          <td class="def">A snapshot of changes saved to the history</td>
+          <td class="ex">"Write a clear commit message describing what changed."</td>
+        </tr>
+        <tr>
+          <td class="term">branch</td>
+          <td class="def">An independent line of development</td>
+          <td class="ex">"Create a feature branch before starting new work."</td>
+        </tr>
+        <tr>
+          <td class="term">merge conflict</td>
+          <td class="def">A situation where two branches have incompatible changes</td>
+          <td class="ex">"I need to resolve a merge conflict in the config file."</td>
+        </tr>
+        <tr>
+          <td class="term">pull request (PR)</td>
+          <td class="def">A request to merge one branch into another, often reviewed by peers</td>
+          <td class="ex">"Open a PR when your feature is ready for review."</td>
+        </tr>
+        <tr>
+          <td class="term">rebase</td>
+          <td class="def">Reapply commits on top of another base branch</td>
+          <td class="ex">"Rebase your branch to keep the history clean."</td>
+        </tr>
+      </table>
+
+      <div class="section-label">Common Phrases</div>
+      <ul class="phrase-list">
+        <li><span class="ph">"I'll push my changes shortly."</span><span class="ph-def">– I will upload my work to the remote soon</span></li>
+        <li><span class="ph">"Can you review my PR?"</span><span class="ph-def">– Please check and approve my pull request</span></li>
+        <li><span class="ph">"Let me cherry-pick that fix."</span><span class="ph-def">– I'll apply only that specific commit</span></li>
+        <li><span class="ph">"The main branch is broken."</span><span class="ph-def">– The primary branch has a critical error</span></li>
+      </ul>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Fill in the Blank</div>
+        <p>Complete the sentences with the correct term: <strong>commit, branch, repository, merge conflict, pull request</strong></p>
+        <ol>
+          <li>I created a new ________ called <code>feature/login</code> to work on the authentication module.</li>
+          <li>After finishing the feature, I opened a ________ to get feedback from my teammates.</li>
+          <li>When two developers edited the same line, a ________ occurred.</li>
+          <li>Each ________ message should explain <em>why</em> a change was made, not just <em>what</em>.</li>
+          <li>The project's ________ is hosted on GitHub.</li>
+        </ol>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Answers</button>
+        <div class="answer">1. branch &nbsp;·&nbsp; 2. pull request &nbsp;·&nbsp; 3. merge conflict &nbsp;·&nbsp; 4. commit &nbsp;·&nbsp; 5. repository</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 2 -->
+  <div class="lesson" id="l2">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 02</span>
+      <span class="lesson-title">Code Review Language</span>
+      <span class="lesson-tag tag-phrase">PHRASES</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">Review Comment Vocabulary</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">nit / nitpick</td>
+          <td class="def">A minor, non-blocking suggestion</td>
+          <td class="ex">"Nit: rename this variable for clarity."</td>
+        </tr>
+        <tr>
+          <td class="term">blocking</td>
+          <td class="def">An issue that must be fixed before merging</td>
+          <td class="ex">"This is blocking — it will cause a null pointer exception."</td>
+        </tr>
+        <tr>
+          <td class="term">LGTM</td>
+          <td class="def">Looks Good To Me — approval shorthand</td>
+          <td class="ex">"LGTM! Nice refactor."</td>
+        </tr>
+        <tr>
+          <td class="term">abstraction</td>
+          <td class="def">Hiding complexity behind a simpler interface</td>
+          <td class="ex">"This could benefit from a higher level of abstraction."</td>
+        </tr>
+        <tr>
+          <td class="term">edge case</td>
+          <td class="def">An unusual input or condition not covered by typical logic</td>
+          <td class="ex">"What happens with an empty array? That's an edge case."</td>
+        </tr>
+      </table>
+
+      <div class="section-label">Diplomatic Review Phrases</div>
+      <ul class="phrase-list">
+        <li><span class="ph">"Could we consider...?"</span><span class="ph-def">– Polite suggestion without demanding change</span></li>
+        <li><span class="ph">"I might be wrong, but..."</span><span class="ph-def">– Softening a critical comment</span></li>
+        <li><span class="ph">"This looks good overall."</span><span class="ph-def">– Positive framing before raising issues</span></li>
+        <li><span class="ph">"What was the reasoning here?"</span><span class="ph-def">– Asking for context without sounding judgmental</span></li>
+        <li><span class="ph">"Let's follow up offline."</span><span class="ph-def">– Move a complex discussion out of the review thread</span></li>
+      </ul>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Rephrase Aggressively</div>
+        <p>Rewrite these aggressive comments into professional, diplomatic ones:</p>
+        <ol>
+          <li>"This code is garbage and you clearly don't understand pointers."</li>
+          <li>"Why did you do it this way?? This will never work."</li>
+          <li>"Just fix the variable name, it's obvious."</li>
+        </ol>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Suggested Answers</button>
+        <div class="answer">
+          1. "This approach may lead to memory issues — could we revisit the pointer management here?"<br>
+          2. "I'm not sure this will handle the edge cases correctly — could you walk me through the logic?"<br>
+          3. "Nit: renaming this variable to something more descriptive might improve readability."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 3 -->
+  <div class="lesson" id="l3">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 03</span>
+      <span class="lesson-title">Writing Bug Reports</span>
+      <span class="lesson-tag tag-write">WRITING</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">Bug Report Vocabulary</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">steps to reproduce</td>
+          <td class="def">A numbered list of actions to trigger the bug</td>
+          <td class="ex">"Steps to reproduce: 1. Log in, 2. Click profile, 3. Save."</td>
+        </tr>
+        <tr>
+          <td class="term">expected behavior</td>
+          <td class="def">What should happen according to the requirements</td>
+          <td class="ex">"Expected: the form submits successfully."</td>
+        </tr>
+        <tr>
+          <td class="term">actual behavior</td>
+          <td class="def">What is actually happening (the bug)</td>
+          <td class="ex">"Actual: a 500 error is thrown."</td>
+        </tr>
+        <tr>
+          <td class="term">severity</td>
+          <td class="def">The impact level: critical, major, minor, trivial</td>
+          <td class="ex">"Severity: critical — users cannot log in."</td>
+        </tr>
+        <tr>
+          <td class="term">regression</td>
+          <td class="def">A bug that was previously fixed but reappeared</td>
+          <td class="ex">"This looks like a regression from the v2.1 release."</td>
+        </tr>
+        <tr>
+          <td class="term">workaround</td>
+          <td class="def">A temporary solution while the real fix is pending</td>
+          <td class="ex">"Workaround: clear the cache to resolve the issue temporarily."</td>
+        </tr>
+      </table>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Write a Bug Report</div>
+        <p>Using the vocabulary above, write a short bug report (5–8 sentences) for the following scenario:</p>
+        <p>A user reports that when they upload a profile picture larger than 2MB on mobile, the page freezes and the image never saves. Smaller images work fine. The issue started after last week's update.</p>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Sample Answer</button>
+        <div class="answer">
+          <strong>Title:</strong> Profile picture upload freezes on mobile for files &gt;2MB<br><br>
+          <strong>Severity:</strong> Major<br>
+          <strong>Steps to reproduce:</strong> 1) Log in on mobile. 2) Navigate to Profile. 3) Upload an image larger than 2MB.<br>
+          <strong>Expected behavior:</strong> The image uploads and the profile is updated successfully.<br>
+          <strong>Actual behavior:</strong> The page freezes and the image is never saved.<br>
+          <strong>Notes:</strong> Images under 2MB work correctly. This appears to be a regression introduced in last week's update. No workaround identified yet.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 4 -->
+  <div class="lesson" id="l4">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 04</span>
+      <span class="lesson-title">APIs &amp; Technical Documentation</span>
+      <span class="lesson-tag tag-read">READING</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">API Vocabulary</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">endpoint</td>
+          <td class="def">A specific URL where an API can be accessed</td>
+          <td class="ex">"The <code>/users/{id}</code> endpoint returns user data."</td>
+        </tr>
+        <tr>
+          <td class="term">payload</td>
+          <td class="def">The data sent in a request body</td>
+          <td class="ex">"Send a JSON payload with name and email."</td>
+        </tr>
+        <tr>
+          <td class="term">rate limiting</td>
+          <td class="def">Restricting how many requests a client can make</td>
+          <td class="ex">"The API enforces rate limiting of 100 req/min."</td>
+        </tr>
+        <tr>
+          <td class="term">idempotent</td>
+          <td class="def">Calling the same endpoint multiple times produces the same result</td>
+          <td class="ex">"GET requests should be idempotent."</td>
+        </tr>
+        <tr>
+          <td class="term">deprecation</td>
+          <td class="def">Marking a feature as outdated and scheduled for removal</td>
+          <td class="ex">"This endpoint is deprecated. Use v2 instead."</td>
+        </tr>
+        <tr>
+          <td class="term">authentication token</td>
+          <td class="def">A credential used to verify identity in API calls</td>
+          <td class="ex">"Include the Bearer token in the Authorization header."</td>
+        </tr>
+      </table>
+
+      <div class="section-label">Reading: Sample API Doc Snippet</div>
+      <div class="code-block">
+<span class="cmt">// POST /api/v2/users</span>
+<span class="cmt">// Creates a new user account. Requires authentication.</span>
+<span class="cmt">// Rate limit: 10 requests per minute.</span>
+
+<span class="kw">Request</span> Body (JSON payload):
+{
+  <span class="str">"username"</span>: <span class="str">"string"</span>,     <span class="cmt">// required, 3-30 chars</span>
+  <span class="str">"email"</span>:    <span class="str">"string"</span>,     <span class="cmt">// required, valid email</span>
+  <span class="str">"role"</span>:     <span class="str">"string"</span>      <span class="cmt">// optional, default: "user"</span>
+}
+
+<span class="kw">Response</span> <span class="num">201</span> Created:
+{ <span class="str">"id"</span>: <span class="num">42</span>, <span class="str">"username"</span>: <span class="str">"john_doe"</span>, <span class="str">"created_at"</span>: <span class="str">"2024-01-15T..."</span> }
+
+<span class="kw">Response</span> <span class="num">429</span> Too Many Requests:
+{ <span class="str">"error"</span>: <span class="str">"Rate limit exceeded. Retry after 60s."</span> }
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Reading Comprehension</div>
+        <p>Based on the doc snippet above, answer these questions:</p>
+        <ol>
+          <li>Which field is optional in the request payload?</li>
+          <li>What HTTP status code is returned when a user is created successfully?</li>
+          <li>What happens if you exceed the rate limit?</li>
+          <li>What does the <code>id: 42</code> in the response represent?</li>
+        </ol>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Answers</button>
+        <div class="answer">
+          1. The "role" field is optional (default: "user").<br>
+          2. HTTP 201 Created is returned on success.<br>
+          3. You receive a 429 Too Many Requests response and must wait 60 seconds.<br>
+          4. It is the unique identifier assigned to the newly created user.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 5 -->
+  <div class="lesson" id="l5">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 05</span>
+      <span class="lesson-title">Agile &amp; Scrum Terminology</span>
+      <span class="lesson-tag tag-vocab">VOCABULARY</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">Agile Glossary</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">sprint</td>
+          <td class="def">A fixed time period (usually 2 weeks) to complete a set of tasks</td>
+          <td class="ex">"We ship a release at the end of each sprint."</td>
+        </tr>
+        <tr>
+          <td class="term">backlog</td>
+          <td class="def">The prioritized list of all pending work items</td>
+          <td class="ex">"Let's groom the backlog before next sprint."</td>
+        </tr>
+        <tr>
+          <td class="term">velocity</td>
+          <td class="def">The amount of work a team completes in a sprint (measured in story points)</td>
+          <td class="ex">"Our team velocity is around 40 points per sprint."</td>
+        </tr>
+        <tr>
+          <td class="term">retrospective (retro)</td>
+          <td class="def">A meeting to reflect on what went well and what to improve</td>
+          <td class="ex">"We'll discuss the deployment issues in the retro."</td>
+        </tr>
+        <tr>
+          <td class="term">blocker</td>
+          <td class="def">An obstacle preventing a task from being completed</td>
+          <td class="ex">"I have a blocker — I need access to the production DB."</td>
+        </tr>
+        <tr>
+          <td class="term">acceptance criteria</td>
+          <td class="def">Conditions that a feature must meet to be considered done</td>
+          <td class="ex">"The acceptance criteria require mobile responsiveness."</td>
+        </tr>
+      </table>
+
+      <div class="section-label">Daily Stand-up Phrases</div>
+      <ul class="phrase-list">
+        <li><span class="ph">"Yesterday I worked on..."</span><span class="ph-def">– What you completed</span></li>
+        <li><span class="ph">"Today I'm planning to..."</span><span class="ph-def">– What you will do today</span></li>
+        <li><span class="ph">"I'm blocked by..."</span><span class="ph-def">– What is stopping your progress</span></li>
+        <li><span class="ph">"I'll take that ticket."</span><span class="ph-def">– Voluntarily picking up a task</span></li>
+        <li><span class="ph">"That's out of scope."</span><span class="ph-def">– Not part of this sprint/feature</span></li>
+      </ul>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Daily Stand-up Simulation</div>
+        <p>Write your own stand-up update (3 sentences) using the phrases above. Include: what you did yesterday, what you plan for today, and one blocker.</p>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Sample</button>
+        <div class="answer">
+          "Yesterday I worked on integrating the payment gateway and resolved a merge conflict on the checkout branch. Today I'm planning to write unit tests for the new endpoints and update the API docs. I'm currently blocked by missing credentials for the sandbox environment — I've pinged DevOps about it."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 6 -->
+  <div class="lesson" id="l6">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 06</span>
+      <span class="lesson-title">System Design &amp; Architecture</span>
+      <span class="lesson-tag tag-vocab">VOCABULARY</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">Architecture Terms</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">scalability</td>
+          <td class="def">The ability to handle increasing load by adding resources</td>
+          <td class="ex">"Horizontal scalability means adding more servers."</td>
+        </tr>
+        <tr>
+          <td class="term">bottleneck</td>
+          <td class="def">A component that limits the overall system performance</td>
+          <td class="ex">"The database is the bottleneck under high traffic."</td>
+        </tr>
+        <tr>
+          <td class="term">latency</td>
+          <td class="def">The time delay between a request and its response</td>
+          <td class="ex">"High latency is causing a poor user experience."</td>
+        </tr>
+        <tr>
+          <td class="term">throughput</td>
+          <td class="def">The number of requests a system can handle per unit of time</td>
+          <td class="ex">"We need to increase throughput to 10,000 req/s."</td>
+        </tr>
+        <tr>
+          <td class="term">single point of failure</td>
+          <td class="def">A component whose failure would bring down the entire system</td>
+          <td class="ex">"Avoid single points of failure with redundancy."</td>
+        </tr>
+        <tr>
+          <td class="term">load balancer</td>
+          <td class="def">A system that distributes traffic across multiple servers</td>
+          <td class="ex">"The load balancer routes requests to the least busy node."</td>
+        </tr>
+      </table>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Match the Term</div>
+        <p>Match each scenario with the correct term: <strong>bottleneck, latency, scalability, single point of failure, load balancer</strong></p>
+        <ol>
+          <li>Users complain that responses take 3 seconds. → ________</li>
+          <li>The app runs on one server. If it crashes, everything goes down. → ________</li>
+          <li>Traffic spikes on Black Friday and new servers are automatically added. → ________</li>
+          <li>CPU usage is at 100% while memory is at 20%. → ________</li>
+          <li>Requests are distributed among 5 identical backend instances. → ________</li>
+        </ol>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Answers</button>
+        <div class="answer">1. latency &nbsp;·&nbsp; 2. single point of failure &nbsp;·&nbsp; 3. scalability &nbsp;·&nbsp; 4. bottleneck &nbsp;·&nbsp; 5. load balancer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 7 -->
+  <div class="lesson" id="l7">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 07</span>
+      <span class="lesson-title">Testing &amp; Quality Assurance</span>
+      <span class="lesson-tag tag-vocab">VOCABULARY</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">Testing Vocabulary</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">unit test</td>
+          <td class="def">Tests a single function or component in isolation</td>
+          <td class="ex">"Write a unit test for the calculateTax() function."</td>
+        </tr>
+        <tr>
+          <td class="term">integration test</td>
+          <td class="def">Tests how multiple components work together</td>
+          <td class="ex">"The integration test checks the API and DB together."</td>
+        </tr>
+        <tr>
+          <td class="term">test coverage</td>
+          <td class="def">The percentage of code exercised by tests</td>
+          <td class="ex">"We require at least 80% test coverage before merging."</td>
+        </tr>
+        <tr>
+          <td class="term">mock / stub</td>
+          <td class="def">A fake object simulating a dependency for testing</td>
+          <td class="ex">"Mock the HTTP client to avoid real network calls in tests."</td>
+        </tr>
+        <tr>
+          <td class="term">flaky test</td>
+          <td class="def">A test that sometimes passes and sometimes fails without code changes</td>
+          <td class="ex">"This flaky test is caused by a timing issue."</td>
+        </tr>
+        <tr>
+          <td class="term">regression test</td>
+          <td class="def">A test ensuring old features still work after new changes</td>
+          <td class="ex">"Run the full regression test suite before deployment."</td>
+        </tr>
+      </table>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — True or False</div>
+        <p>Mark each statement as True (T) or False (F):</p>
+        <ol>
+          <li>A unit test checks how multiple systems interact. ___</li>
+          <li>A flaky test is unreliable and can fail randomly. ___</li>
+          <li>100% test coverage guarantees bug-free code. ___</li>
+          <li>A mock object replaces a real dependency during testing. ___</li>
+          <li>Regression tests verify that new features work correctly. ___</li>
+        </ol>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Answers</button>
+        <div class="answer">1. F &nbsp;·&nbsp; 2. T &nbsp;·&nbsp; 3. F (coverage ≠ correctness) &nbsp;·&nbsp; 4. T &nbsp;·&nbsp; 5. F (they verify old features still work)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 8 -->
+  <div class="lesson" id="l8">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 08</span>
+      <span class="lesson-title">DevOps, CI/CD &amp; Deployment</span>
+      <span class="lesson-tag tag-vocab">VOCABULARY</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">DevOps Vocabulary</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">pipeline</td>
+          <td class="def">An automated sequence of steps: build → test → deploy</td>
+          <td class="ex">"The CI pipeline runs on every push to main."</td>
+        </tr>
+        <tr>
+          <td class="term">rollback</td>
+          <td class="def">Reverting a deployment to a previous stable version</td>
+          <td class="ex">"We had to rollback after the hotfix broke login."</td>
+        </tr>
+        <tr>
+          <td class="term">artifact</td>
+          <td class="def">A build output (binary, Docker image, etc.) ready for deployment</td>
+          <td class="ex">"The pipeline produces a Docker artifact."</td>
+        </tr>
+        <tr>
+          <td class="term">environment</td>
+          <td class="def">An isolated setup: dev, staging, or production</td>
+          <td class="ex">"Test in staging before promoting to production."</td>
+        </tr>
+        <tr>
+          <td class="term">blue-green deployment</td>
+          <td class="def">Running two identical environments and switching traffic instantly</td>
+          <td class="ex">"Blue-green deployment allows zero-downtime releases."</td>
+        </tr>
+        <tr>
+          <td class="term">infrastructure as code (IaC)</td>
+          <td class="def">Managing infrastructure through code files (e.g. Terraform)</td>
+          <td class="ex">"All our infra is defined as code in the repo."</td>
+        </tr>
+      </table>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Describe a Pipeline</div>
+        <p>Using at least 4 vocabulary terms from this lesson, write a short paragraph (4–6 sentences) describing a typical CI/CD pipeline for a web application.</p>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Sample Answer</button>
+        <div class="answer">
+          "When a developer pushes code to the main branch, the CI pipeline automatically runs. It builds the application and produces a Docker artifact, then runs the full test suite. If all tests pass, the artifact is promoted to the staging environment for manual verification. Once approved, a blue-green deployment is triggered on production, enabling zero downtime. If any issues arise, we can execute a rollback within minutes."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 9 -->
+  <div class="lesson" id="l9">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 09</span>
+      <span class="lesson-title">Team Communication &amp; Meetings</span>
+      <span class="lesson-tag tag-phrase">PHRASES</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">Meeting Language</div>
+      <ul class="phrase-list">
+        <li><span class="ph">"Let's take this offline."</span><span class="ph-def">– Discuss privately after the meeting</span></li>
+        <li><span class="ph">"Could you elaborate on that?"</span><span class="ph-def">– Please explain further</span></li>
+        <li><span class="ph">"To summarize what we agreed on..."</span><span class="ph-def">– Recapping decisions at the end</span></li>
+        <li><span class="ph">"I'll circle back on this."</span><span class="ph-def">– I'll follow up on this later</span></li>
+        <li><span class="ph">"Let's park that idea for now."</span><span class="ph-def">– Delay discussion without discarding it</span></li>
+        <li><span class="ph">"Can we get alignment on this?"</span><span class="ph-def">– Do we all agree?</span></li>
+        <li><span class="ph">"I'll own this action item."</span><span class="ph-def">– I'll take responsibility for this task</span></li>
+        <li><span class="ph">"That's a fair point."</span><span class="ph-def">– Acknowledging someone's valid argument</span></li>
+      </ul>
+
+      <div class="section-label">Async Communication (Slack/Email)</div>
+      <ul class="phrase-list">
+        <li><span class="ph">"FYI — no action needed."</span><span class="ph-def">– For Your Information only</span></li>
+        <li><span class="ph">"Heads up: this may affect you."</span><span class="ph-def">– Informal warning or notice</span></li>
+        <li><span class="ph">"Tagging @dev for visibility."</span><span class="ph-def">– Notifying someone to be aware</span></li>
+        <li><span class="ph">"ETA on this?"</span><span class="ph-def">– When will it be done? (Estimated Time of Arrival)</span></li>
+        <li><span class="ph">"WDYT?"</span><span class="ph-def">– What Do You Think?</span></li>
+      </ul>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Translate the Jargon</div>
+        <p>Rephrase each of the following in plain, formal English:</p>
+        <ol>
+          <li>"Let's park that and circle back EOD."</li>
+          <li>"Heads up — the deploy is OOO, FYI."</li>
+          <li>"Can we get alignment? WDYT, @team?"</li>
+        </ol>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Answers</button>
+        <div class="answer">
+          1. "Let's set that topic aside for now and revisit it at the end of the day."<br>
+          2. "Please be aware that the deployment is currently out of service — this is for your information."<br>
+          3. "Can we all agree on this? What does the team think?"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 10 -->
+  <div class="lesson" id="l10">
+    <div class="lesson-header">
+      <span class="lesson-num">LESSON 10</span>
+      <span class="lesson-title">Technical Interviews &amp; Career</span>
+      <span class="lesson-tag tag-phrase">PHRASES</span>
+    </div>
+    <div class="lesson-body">
+      <div class="section-label">Interview Vocabulary</div>
+      <table class="vocab-table">
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr>
+          <td class="term">trade-off</td>
+          <td class="def">A compromise between two competing qualities</td>
+          <td class="ex">"There's a trade-off between readability and performance here."</td>
+        </tr>
+        <tr>
+          <td class="term">walk me through</td>
+          <td class="def">Explain step by step</td>
+          <td class="ex">"Walk me through your approach to this problem."</td>
+        </tr>
+        <tr>
+          <td class="term">time complexity</td>
+          <td class="def">How runtime grows relative to input size (Big-O notation)</td>
+          <td class="ex">"The time complexity of this solution is O(n log n)."</td>
+        </tr>
+        <tr>
+          <td class="term">clarifying questions</td>
+          <td class="def">Questions asked to better understand the problem before solving</td>
+          <td class="ex">"Can I ask a few clarifying questions before I start?"</td>
+        </tr>
+        <tr>
+          <td class="term">to elaborate</td>
+          <td class="def">To give more detail or expand on an idea</td>
+          <td class="ex">"I can elaborate on my design choices if needed."</td>
+        </tr>
+      </table>
+
+      <div class="section-label">Key Interview Phrases</div>
+      <ul class="phrase-list">
+        <li><span class="ph">"Let me think through this out loud."</span><span class="ph-def">– Verbalizing your reasoning process</span></li>
+        <li><span class="ph">"My initial approach would be..."</span><span class="ph-def">– Starting with a brute force or simple solution</span></li>
+        <li><span class="ph">"We could optimize this by..."</span><span class="ph-def">– Improving your solution</span></li>
+        <li><span class="ph">"One edge case I should consider is..."</span><span class="ph-def">– Showing thorough thinking</span></li>
+        <li><span class="ph">"The trade-off here is..."</span><span class="ph-def">– Demonstrating architectural maturity</span></li>
+        <li><span class="ph">"I'm not 100% sure, but my reasoning is..."</span><span class="ph-def">– Honest under uncertainty</span></li>
+      </ul>
+
+      <div class="exercise">
+        <div class="exercise-title">Exercise — Mock Interview Answer</div>
+        <p>Answer the following interview question in 5–8 sentences using vocabulary from this lesson and previous lessons. Use at least 4 key terms or phrases.</p>
+        <p><strong>Question:</strong> "How would you design a URL shortener like bit.ly?"</p>
+        <button class="answer-toggle" onclick="toggleAnswer(this)">Show Sample Answer</button>
+        <div class="answer">
+          "Let me think through this out loud. Before diving in, can I ask a few clarifying questions? For instance, what's the expected throughput — thousands or millions of shortened URLs per day?<br><br>
+          My initial approach would be a simple key-value store mapping a unique short code to the original URL. For scalability, I'd introduce a load balancer to distribute read requests across multiple database replicas, since reads will far outnumber writes.<br><br>
+          The main trade-off here is between storage cost and collision probability in the key generation algorithm. One edge case I should consider is handling duplicate submissions of the same original URL. The time complexity of a lookup would be O(1) using a hash map. I can elaborate on the caching layer or analytics component if needed."
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Technical English for Developers &nbsp;·&nbsp; 10 Lessons &nbsp;·&nbsp; Open Source</p>
+  <p style="margin-top:8px; color: #334155;">Built with ❤️ · Share freely on <a href="#">GitHub</a></p>
+</footer>
+
+<script>
+  function toggleAnswer(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = answer.classList.toggle('show');
+    btn.textContent = isOpen ? 'Hide Answers' : 'Show Answers';
+    if (btn.textContent === 'Hide Answers' && btn.textContent.includes('Sample')) {
+      btn.textContent = 'Hide Sample';
+    }
+  }
+
+  // Fix toggle text for "Sample" buttons
+  document.querySelectorAll('.answer-toggle').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const answer = this.nextElementSibling;
+      const originalText = this.dataset.original || this.textContent;
+      if (!this.dataset.original) this.dataset.original = originalText;
+      this.textContent = answer.classList.contains('show')
+        ? 'Hide ' + originalText.replace('Show ', '')
+        : originalText;
+    });
+  });
+
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const max = document.body.scrollHeight - window.innerHeight;
+    document.getElementById('progress').style.width = (scrolled / max * 100) + '%';
+  });
+</script>
+
+</body>
+</html>
